@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Job Support CRM</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        body{
+            background:#f4f7fc;
+            font-family:Arial;
+        }
+
+        .sidebar{
+            width:240px;
+            height:100vh;
+            background:#111827;
+            position:fixed;
+            color:white;
+            padding:20px;
+        }
+
+        .sidebar h2{
+            margin-bottom:40px;
+            font-weight:bold;
+        }
+
+        .sidebar a{
+            display:block;
+            color:white;
+            text-decoration:none;
+            padding:12px;
+            margin-bottom:10px;
+            border-radius:10px;
+        }
+
+        .sidebar a:hover{
+            background:#1f2937;
+        }
+
+        .main{
+            margin-left:260px;
+            padding:30px;
+        }
+
+        .dashboard-card{
+            padding:25px;
+            border-radius:18px;
+            color:white;
+        }
+
+        .blue{
+            background:linear-gradient(135deg,#2563eb,#1d4ed8);
+        }
+
+        .green{
+            background:linear-gradient(135deg,#059669,#047857);
+        }
+
+        .orange{
+            background:linear-gradient(135deg,#ea580c,#c2410c);
+        }
+
+        .card-box{
+            background:white;
+            padding:25px;
+            border-radius:18px;
+            box-shadow:0px 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .form-control{
+            height:48px;
+            border-radius:10px;
+        }
+
+        .btn-save{
+            width:100%;
+            height:48px;
+            border:none;
+            background:#2563eb;
+            color:white;
+            border-radius:10px;
+            font-weight:bold;
+        }
+
+        .btn-save:hover{
+            background:#1d4ed8;
+        }
+
+        .badge-status{
+            padding:8px 14px;
+            border-radius:20px;
+            background:#dbeafe;
+            color:#1e40af;
+            font-size:12px;
+        }
+
+        table{
+            font-size:14px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <h2>Job Support</h2>
+
+    <a href="#">Dashboard</a>
+    <a href="#">Candidates</a>
+    <a href="#">Payments</a>
+    <a href="#">Selection Process</a>
+    <a href="#">Reports</a>
+
+</div>
+
+<div class="main">
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+
+            <div class="dashboard-card blue">
+
+                <h5>Total Candidates</h5>
+
+                <h2>{{ data|length }}</h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="dashboard-card green">
+
+                <h5>Total Paid</h5>
+
+                <h2>₹ {{ total_paid }}</h2>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="dashboard-card orange">
+
+                <h5>Total Pending</h5>
+
+                <h2>₹ {{ total_pending }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-4">
+
+            <div class="card-box">
+
+                <h4 class="mb-4">Add Candidate</h4>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+
+                        <label>Name</label>
+
+                        <input type="text" name="name" class="form-control" required>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label>Phone</label>
+
+                        <input type="text" name="phone" class="form-control" required>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label>Company</label>
+
+                        <input type="text" name="company" class="form-control" required>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label>Total Fee</label>
+
+                        <input type="number" id="total_fee" name="total_fee" class="form-control" required>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label>Paid Amount</label>
+
+                        <input type="number" id="paid_amount" name="paid_amount" class="form-control" required onkeyup="calculatePending()">
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label>Pending Amount</label>
+
+                        <input type="number" id="pending_amount" name="pending_amount" class="form-control" readonly>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label>Selection Stage</label>
+
+                        <select name="status" class="form-control">
+
+                            <option>Interview</option>
+                            <option>Assessment</option>
+                            <option>Technical Round</option>
+                            <option>HR Round</option>
+                            <option>Selected</option>
+                            <option>Waiting For Offer</option>
+                            <option>Offer Released</option>
+                            <option>Onboarding</option>
+                            <option>Welcome Mail</option>
+                            <option>Training</option>
+                            <option>Completed</option>
+                            <option>Rejected</option>
+
+                        </select>
+
+                    </div>
+
+                    <button class="btn-save">
+                        Save Candidate
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-8">
+
+            <div class="card-box">
+
+                <div class="d-flex justify-content-between mb-4">
+
+                    <h4>Candidate Records</h4>
+
+                </div>
+
+                <table class="table table-hover">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>Name</th>
+                            <th>Company</th>
+                            <th>Total</th>
+                            <th>Paid</th>
+                            <th>Pending</th>
+                            <th>Stage</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for i in data %}
+
+                        <tr>
+
+                            <td>{{ i.name }}</td>
+
+                            <td>{{ i.company }}</td>
+
+                            <td>₹ {{ i.total_fee }}</td>
+
+                            <td>₹ {{ i.paid_amount }}</td>
+
+                            <td>₹ {{ i.pending_amount }}</td>
+
+                            <td>
+
+                                <span class="badge-status">
+
+                                    {{ i.status }}
+
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function calculatePending(){
+
+    let total = document.getElementById('total_fee').value;
+    let paid = document.getElementById('paid_amount').value;
+
+    total = parseInt(total) || 0;
+    paid = parseInt(paid) || 0;
+
+    let pending = total - paid;
+
+    document.getElementById('pending_amount').value = pending;
+
+}
+
+</script>
+
+</body>
+</html>candidates_candidate
