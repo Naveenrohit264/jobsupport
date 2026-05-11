@@ -1,51 +1,77 @@
+# views.py
+
 from django.shortcuts import render, redirect
 from .models import Candidate
-
-DELETE_PASSWORD = "admin123"
 
 
 def home(request):
 
-    # ADD CANDIDATE
-    if request.method == 'POST' and request.POST.get('action') == 'add':
+    if request.method == 'POST':
 
-        Candidate.objects.create(
-            name=request.POST.get('name'),
-            phone=request.POST.get('phone'),
-            company=request.POST.get('company'),
-            total_fee=request.POST.get('total_fee'),
-            paid_amount=request.POST.get('paid_amount'),
-            pending_amount=request.POST.get('pending_amount'),
-            status=request.POST.get('status')
-        )
+        action = request.POST.get('action')
 
-        return redirect('/')
+        # ADD CANDIDATE
 
-    # DELETE CANDIDATE
-    if request.method == 'POST' and request.POST.get('action') == 'delete':
+        if action == 'add':
 
-        entered_password = request.POST.get('delete_password')
-        candidate_id = request.POST.get('candidate_id')
+            Candidate.objects.create(
+                name=request.POST.get('name'),
+                phone=request.POST.get('phone'),
+                company=request.POST.get('company'),
+                total_fee=request.POST.get('total_fee'),
+                paid_amount=request.POST.get('paid_amount'),
+                pending_amount=request.POST.get('pending_amount'),
+                status=request.POST.get('status'),
+            )
 
-        if entered_password == DELETE_PASSWORD:
+        # EDIT CANDIDATE
 
-            Candidate.objects.filter(id=candidate_id).delete()
+        elif action == 'edit':
+
+            candidate = Candidate.objects.get(
+                id=request.POST.get('candidate_id')
+            )
+            
+            total_fee = int(request.POST.get('total_fee'))
+            paid_amount = int(request.POST.get('paid_amount'))
+
+            pending_amount = total_fee - paid_amount
+
+            if pending_amount < 0:
+                pending_amount = 0
+            candidate.name = request.POST.get('name')
+            candidate.phone = request.POST.get('phone')
+            candidate.company = request.POST.get('company')
+            candidate.total_fee = total_fee
+            candidate.paid_amount = paid_amount
+            candidate.pending_amount = pending_amount
+            candidate.status = request.POST.get('status')
+
+            candidate.save()
+
+        # DELETE CANDIDATE
+
+        elif action == 'delete':
+
+            password = request.POST.get('delete_password')
+
+            if password == "admin123":
+
+                Candidate.objects.get(
+                    id=request.POST.get('candidate_id')
+                ).delete()
 
         return redirect('/')
 
     data = Candidate.objects.all().order_by('-id')
 
-    total_paid = 0
-    total_pending = 0
-
-    for i in data:
-        total_paid += i.paid_amount
-        total_pending += i.pending_amount
+    total_paid = sum(i.paid_amount for i in data)
+    total_pending = sum(i.pending_amount for i in data)
 
     context = {
         'data': data,
         'total_paid': total_paid,
-        'total_pending': total_pending
+        'total_pending': total_pending,
     }
 
     return render(request, 'home.html', context)
