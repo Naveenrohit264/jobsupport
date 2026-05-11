@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from .models import Candidate
 
-# TEMPORARY DELETE
-Candidate.objects.all().delete()
+DELETE_PASSWORD = "admin123"
+
 
 def home(request):
 
-    if request.method == 'POST':
+    # ADD CANDIDATE
+    if request.method == 'POST' and request.POST.get('action') == 'add':
 
         Candidate.objects.create(
             name=request.POST.get('name'),
@@ -20,7 +21,19 @@ def home(request):
 
         return redirect('/')
 
-    data = Candidate.objects.all()
+    # DELETE CANDIDATE
+    if request.method == 'POST' and request.POST.get('action') == 'delete':
+
+        entered_password = request.POST.get('delete_password')
+        candidate_id = request.POST.get('candidate_id')
+
+        if entered_password == DELETE_PASSWORD:
+
+            Candidate.objects.filter(id=candidate_id).delete()
+
+        return redirect('/')
+
+    data = Candidate.objects.all().order_by('-id')
 
     total_paid = 0
     total_pending = 0

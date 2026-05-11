@@ -10,34 +10,47 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
     <style>
 
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
         body{
-            background:#f4f7fc;
-            font-family:Arial;
+            background:#f3f6fb;
+            font-family:Arial, sans-serif;
         }
 
         .sidebar{
-            width:240px;
+            width:250px;
             height:100vh;
             background:#111827;
             position:fixed;
+            left:0;
+            top:0;
+            padding:25px;
             color:white;
-            padding:20px;
+            overflow:auto;
         }
 
         .sidebar h2{
             margin-bottom:40px;
+            font-size:28px;
             font-weight:bold;
         }
 
         .sidebar a{
             display:block;
-            color:white;
             text-decoration:none;
-            padding:12px;
+            color:white;
+            padding:14px;
             margin-bottom:10px;
-            border-radius:10px;
+            border-radius:12px;
+            transition:0.3s;
         }
 
         .sidebar a:hover{
@@ -45,14 +58,15 @@
         }
 
         .main{
-            margin-left:260px;
-            padding:30px;
+            margin-left:250px;
+            padding:25px;
         }
 
         .dashboard-card{
+            border-radius:20px;
             padding:25px;
-            border-radius:18px;
             color:white;
+            margin-bottom:20px;
         }
 
         .blue{
@@ -67,26 +81,37 @@
             background:linear-gradient(135deg,#ea580c,#c2410c);
         }
 
+        .dashboard-card h2{
+            margin-top:10px;
+            font-weight:bold;
+        }
+
         .card-box{
             background:white;
+            border-radius:20px;
             padding:25px;
-            border-radius:18px;
-            box-shadow:0px 2px 10px rgba(0,0,0,0.08);
+            box-shadow:0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom:20px;
         }
 
         .form-control{
-            height:48px;
-            border-radius:10px;
+            height:50px;
+            border-radius:12px;
+        }
+
+        select.form-control{
+            height:50px;
         }
 
         .btn-save{
             width:100%;
-            height:48px;
+            height:50px;
             border:none;
+            border-radius:12px;
             background:#2563eb;
             color:white;
-            border-radius:10px;
             font-weight:bold;
+            transition:0.3s;
         }
 
         .btn-save:hover{
@@ -96,13 +121,50 @@
         .badge-status{
             padding:8px 14px;
             border-radius:20px;
+            font-size:12px;
             background:#dbeafe;
             color:#1e40af;
-            font-size:12px;
+            font-weight:bold;
+        }
+
+        .table-responsive{
+            overflow-x:auto;
         }
 
         table{
-            font-size:14px;
+            min-width:850px;
+        }
+
+        .table th{
+            white-space:nowrap;
+        }
+
+        .mobile-top{
+            display:none;
+        }
+
+        @media(max-width:991px){
+
+            .sidebar{
+                display:none;
+            }
+
+            .main{
+                margin-left:0;
+                padding:15px;
+            }
+
+            .mobile-top{
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                background:#111827;
+                color:white;
+                padding:15px;
+                border-radius:14px;
+                margin-bottom:20px;
+            }
+
         }
 
     </style>
@@ -115,19 +177,46 @@
 
     <h2>Job Support</h2>
 
-    <a href="#">Dashboard</a>
-    <a href="#">Candidates</a>
-    <a href="#">Payments</a>
-    <a href="#">Selection Process</a>
-    <a href="#">Reports</a>
+    <a href="#">
+        <i class="fa fa-chart-line"></i>
+        Dashboard
+    </a>
+
+    <a href="#">
+        <i class="fa fa-users"></i>
+        Candidates
+    </a>
+
+    <a href="#">
+        <i class="fa fa-money-bill"></i>
+        Payments
+    </a>
+
+    <a href="#">
+        <i class="fa fa-briefcase"></i>
+        Recruitment
+    </a>
+
+    <a href="#">
+        <i class="fa fa-file"></i>
+        Reports
+    </a>
 
 </div>
 
 <div class="main">
 
-    <div class="row mb-4">
+    <div class="mobile-top">
 
-        <div class="col-md-4">
+        <h4>Job Support CRM</h4>
+
+        <i class="fa fa-bars"></i>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-4 col-md-6">
 
             <div class="dashboard-card blue">
 
@@ -139,7 +228,7 @@
 
         </div>
 
-        <div class="col-md-4">
+        <div class="col-lg-4 col-md-6">
 
             <div class="dashboard-card green">
 
@@ -151,7 +240,7 @@
 
         </div>
 
-        <div class="col-md-4">
+        <div class="col-lg-4 col-md-12">
 
             <div class="dashboard-card orange">
 
@@ -167,21 +256,30 @@
 
     <div class="row">
 
-        <div class="col-md-4">
+        <div class="col-lg-4">
 
             <div class="card-box">
 
-                <h4 class="mb-4">Add Candidate</h4>
+                <h4 class="mb-4">
+                    Add Candidate
+                </h4>
 
                 <form method="POST">
 
                     {% csrf_token %}
 
+                    <input type="hidden" name="action" value="add">
+
                     <div class="mb-3">
 
                         <label>Name</label>
 
-                        <input type="text" name="name" class="form-control" required>
+                        <input
+                            type="text"
+                            name="name"
+                            class="form-control"
+                            required
+                        >
 
                     </div>
 
@@ -189,7 +287,12 @@
 
                         <label>Phone</label>
 
-                        <input type="text" name="phone" class="form-control" required>
+                        <input
+                            type="text"
+                            name="phone"
+                            class="form-control"
+                            required
+                        >
 
                     </div>
 
@@ -197,7 +300,12 @@
 
                         <label>Company</label>
 
-                        <input type="text" name="company" class="form-control" required>
+                        <input
+                            type="text"
+                            name="company"
+                            class="form-control"
+                            required
+                        >
 
                     </div>
 
@@ -205,7 +313,13 @@
 
                         <label>Total Fee</label>
 
-                        <input type="number" id="total_fee" name="total_fee" class="form-control" required>
+                        <input
+                            type="number"
+                            id="total_fee"
+                            name="total_fee"
+                            class="form-control"
+                            required
+                        >
 
                     </div>
 
@@ -213,7 +327,14 @@
 
                         <label>Paid Amount</label>
 
-                        <input type="number" id="paid_amount" name="paid_amount" class="form-control" required onkeyup="calculatePending()">
+                        <input
+                            type="number"
+                            id="paid_amount"
+                            name="paid_amount"
+                            class="form-control"
+                            required
+                            onkeyup="calculatePending()"
+                        >
 
                     </div>
 
@@ -221,11 +342,17 @@
 
                         <label>Pending Amount</label>
 
-                        <input type="number" id="pending_amount" name="pending_amount" class="form-control" readonly>
+                        <input
+                            type="number"
+                            id="pending_amount"
+                            name="pending_amount"
+                            class="form-control"
+                            readonly
+                        >
 
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-4">
 
                         <label>Selection Stage</label>
 
@@ -249,7 +376,9 @@
                     </div>
 
                     <button class="btn-save">
+
                         Save Candidate
+
                     </button>
 
                 </form>
@@ -258,66 +387,148 @@
 
         </div>
 
-        <div class="col-md-8">
+        <div class="col-lg-8">
 
             <div class="card-box">
 
-                <div class="d-flex justify-content-between mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
 
-                    <h4>Candidate Records</h4>
+                    <h4>
+                        Candidate Records
+                    </h4>
 
                 </div>
 
-                <table class="table table-hover">
+                <div class="table-responsive">
 
-                    <thead class="table-dark">
+                    <table class="table table-hover align-middle">
 
-                        <tr>
+                        <thead class="table-dark">
 
-                            <th>Name</th>
-                            <th>Company</th>
-                            <th>Total</th>
-                            <th>Paid</th>
-                            <th>Pending</th>
-                            <th>Stage</th>
+                            <tr>
 
-                        </tr>
+                                <th>Name</th>
+                                <th>Company</th>
+                                <th>Total</th>
+                                <th>Paid</th>
+                                <th>Pending</th>
+                                <th>Status</th>
+                                <th>Action</th>
 
-                    </thead>
+                            </tr>
 
-                    <tbody>
+                        </thead>
 
-                        {% for i in data %}
+                        <tbody>
 
-                        <tr>
+                            {% for i in data %}
 
-                            <td>{{ i.name }}</td>
+                            <tr>
 
-                            <td>{{ i.company }}</td>
+                                <td>{{ i.name }}</td>
 
-                            <td>₹ {{ i.total_fee }}</td>
+                                <td>{{ i.company }}</td>
 
-                            <td>₹ {{ i.paid_amount }}</td>
+                                <td>₹ {{ i.total_fee }}</td>
 
-                            <td>₹ {{ i.pending_amount }}</td>
+                                <td>₹ {{ i.paid_amount }}</td>
 
-                            <td>
+                                <td>₹ {{ i.pending_amount }}</td>
 
-                                <span class="badge-status">
+                                <td>
 
-                                    {{ i.status }}
+                                    <span class="badge-status">
 
-                                </span>
+                                        {{ i.status }}
 
-                            </td>
+                                    </span>
 
-                        </tr>
+                                </td>
 
-                        {% endfor %}
+                                <td>
 
-                    </tbody>
+                                    <button
+                                        class="btn btn-danger btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal{{ i.id }}"
+                                    >
+                                        Delete
+                                    </button>
 
-                </table>
+                                    <!-- Modal -->
+
+                                    <div class="modal fade" id="deleteModal{{ i.id }}" tabindex="-1">
+
+                                        <div class="modal-dialog">
+
+                                            <div class="modal-content">
+
+                                                <div class="modal-header">
+
+                                                    <h5 class="modal-title">
+                                                        Delete Candidate
+                                                    </h5>
+
+                                                    <button
+                                                        type="button"
+                                                        class="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                    ></button>
+
+                                                </div>
+
+                                                <div class="modal-body">
+
+                                                    <form method="POST">
+
+                                                        {% csrf_token %}
+
+                                                        <input type="hidden" name="action" value="delete">
+
+                                                        <input type="hidden" name="candidate_id" value="{{ i.id }}">
+
+                                                        <div class="mb-3">
+
+                                                            <label>
+                                                                Enter Password
+                                                            </label>
+
+                                                            <input
+                                                                type="password"
+                                                                name="delete_password"
+                                                                class="form-control"
+                                                                required
+                                                            >
+
+                                                        </div>
+
+                                                        <button class="btn btn-danger w-100">
+
+                                                            Confirm Delete
+
+                                                        </button>
+
+                                                    </form>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 
@@ -340,10 +551,12 @@ function calculatePending(){
     let pending = total - paid;
 
     document.getElementById('pending_amount').value = pending;
-
 }
 
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
-</html>candidates_candidate
+
+</html>
