@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from .models import Candidate
 
+# TEMPORARY DELETE
+Candidate.objects.all().delete()
+
 def home(request):
 
     if request.method == 'POST':
